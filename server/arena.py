@@ -191,10 +191,10 @@ class Arena:
         """
         # カードを引く
         for p in self.active_players:
+            if self.deck.cards == []:
+                self._log("Deck is empty. Resetting the deck.")
+                self.deck.reset()
             card = self.deck.draw()
-            if card is None:
-                card = self.deck.reset()
-                card = self.deck.draw()
             p.hold_card = card 
 
         # ラウンドログを作る
@@ -216,7 +216,7 @@ class Arena:
         last_call = 0
         turn_count = 0
         while (len(self.active_players) > 1):
-            current_player = self.active_players[self.turn_index]
+            current_player = self.active_players[self.turn_index % len(self.active_players)]
 
             print(f"get_others_info: {self.get_others_info(current_player, self.active_players)}")
             # otherカード合計
@@ -339,7 +339,7 @@ class Arena:
                 self._log(f"{prev_player.player_name} is dead!")
                 self.active_players.remove(prev_player)
                 self.death_order.append(prev_player.player_name)
-                self.turn_index = c_idx
+                # self.turn_index = c_idx
 
         else:
             # コヨーテ失敗 => コールした本人がライフ-1
